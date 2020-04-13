@@ -2,6 +2,7 @@ package ro.pub.cs.systems.eim.Colocviu1_13;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -62,6 +63,11 @@ public class Colocviu1_13MainActivity extends AppCompatActivity {
                     }
                     break;
                 case R.id.changeBtn:
+                    Intent intent = new Intent(getApplicationContext(), Colocviu1_13_SecondaryActivity.class);
+                    intent.putExtra(Constants.ALL_COORDS, myTextView.getText().toString());
+                    myTextView.setText("");
+                    nrPressed = 0;
+                    startActivityForResult(intent, Constants.SECONDARY_ACTIVITY_REQUEST_CODE);
                     break;
                 default:
                     break;
@@ -82,6 +88,7 @@ public class Colocviu1_13MainActivity extends AppCompatActivity {
         east.setOnClickListener(buttonClickListener);
         west.setOnClickListener(buttonClickListener);
         south.setOnClickListener(buttonClickListener);
+        changeBtn.setOnClickListener(buttonClickListener);
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(Constants.NR_PRESSED)) {
                 nrPressed = savedInstanceState.getInt(Constants.NR_PRESSED);
@@ -95,6 +102,19 @@ public class Colocviu1_13MainActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putInt(Constants.NR_PRESSED, nrPressed);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if ((requestCode == Constants.SECONDARY_ACTIVITY_REQUEST_CODE) && (intent != null)) {
+            String cancel = intent.getStringExtra(Constants.CANCEL);
+            String register = intent.getStringExtra(Constants.REGISTER);
+            if (cancel != null && cancel.equals(Constants.CANCEL)) {
+                Toast.makeText(getApplicationContext(), Constants.CANCEL, Toast.LENGTH_LONG).show();
+            } else if (register != null && register.equals(Constants.REGISTER)) {
+                Toast.makeText(getApplicationContext(),  Constants.REGISTER, Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     @Override
