@@ -2,7 +2,10 @@ package ro.pub.cs.systems.eim.Colocviu1_13;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +23,9 @@ public class Colocviu1_13MainActivity extends AppCompatActivity {
     private Button changeBtn;
     private TextView myTextView;
     private int nrPressed;
+    private int serviceStatus = Constants.SERVICE_STOPPED;
+    private IntentFilter intentFilter = new IntentFilter();
+
     private ButtonClickListener buttonClickListener = new ButtonClickListener();
     private class ButtonClickListener implements View.OnClickListener {
 
@@ -72,6 +78,12 @@ public class Colocviu1_13MainActivity extends AppCompatActivity {
                 default:
                     break;
             }
+            if (nrPressed >= 4) {
+                Intent serviceIntent = new Intent(getApplicationContext(), Colocviu1_13Service.class);
+                serviceIntent.putExtra(Constants.SERVICE_COMMANDS, myTextView.getText().toString());
+                getApplication().startService(serviceIntent);
+                serviceStatus = Constants.SERVICE_STARTED;
+            }
         }
     }
     @Override
@@ -97,6 +109,16 @@ public class Colocviu1_13MainActivity extends AppCompatActivity {
                 nrPressed = 0;
             }
         }
+        for (int index = 0; index < Constants.actionTypes.length; index++) {
+            intentFilter.addAction(Constants.actionTypes[index]);
+        }
+
+    }
+    @Override
+    protected void onDestroy() {
+        Intent intent = new Intent(this, Colocviu1_13Service.class);
+        stopService(intent);
+        super.onDestroy();
     }
 
     @Override
@@ -116,7 +138,25 @@ public class Colocviu1_13MainActivity extends AppCompatActivity {
             }
         }
     }
+    private MessageBroadcastReceiver messageBroadcastReceiver = new MessageBroadcastReceiver();
+    private class MessageBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Toast.makeText(getApplicationContext(),  "Broadcast Receiver", Toast.LENGTH_LONG).show();
+        }
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(messageBroadcastReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        unregisterReceiver(messageBroadcastReceiver);
+        super.onPause();
+    }
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {

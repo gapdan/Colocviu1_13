@@ -10,5 +10,11 @@ public class Constants {
     public static final String REGISTER = "Reg";
     public static final String CANCEL = "Cancel";
     public static final int SECONDARY_ACTIVITY_REQUEST_CODE = 1;
-    public static final int MAIN_ACTIVITY_REQUEST_CODE = 2;
+    public static final String BROADCAST_RECEIVER = "broadcast";
+    public static final String[] actionTypes = {
+            "ro.pub.cs.systems.eim.Colocviu1_13.action"
+    };
+    public static final String SERVICE_COMMANDS = "service command";
+    public static int SERVICE_STOPPED = 1;
+    public static int SERVICE_STARTED = 0;
 }
